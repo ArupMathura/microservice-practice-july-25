@@ -1,6 +1,7 @@
 .idea/
 .mvn/
 .gitattributes
+.gitignore
 mvnw
 mvnw.cmd
 HELP.md

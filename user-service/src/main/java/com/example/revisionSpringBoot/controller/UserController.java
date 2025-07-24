@@ -35,7 +35,7 @@ public class UserController {
     @GetMapping("{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable("id") String userId) {
         UserDto getUser = userService.getUserById(userId);
-        log.info("in user controller : user id --> {}, name --> {} {}, email --> {}, password -->{}", getUser.getId(), getUser.getFirstName(), getUser.getLastName(), getUser.getEmail(), getUser.getPassword());
+        log.info("in user controller : user id --> {}, name --> {} {}, email --> {}, password -->{}, ratings --> {}", getUser.getId(), getUser.getFirstName(), getUser.getLastName(), getUser.getEmail(), getUser.getPassword(), getUser.getRatings());
         return new ResponseEntity<>(getUser, HttpStatus.OK);
     }
 

@@ -14,7 +14,8 @@ public interface AutoUserMapper {
             @Mapping(source = "firstName", target = "firstName"),
             @Mapping(source = "lastName", target = "lastName"),
             @Mapping(source = "email", target = "email"),
-            @Mapping(source = "password", target = "password")
+            @Mapping(source = "password", target = "password"),
+            @Mapping(source = "ratings", target = "ratings")
     })
     UserDto mapToUserDto(User user);
 
@@ -23,7 +24,8 @@ public interface AutoUserMapper {
             @Mapping(source = "firstName", target = "firstName"),
             @Mapping(source = "lastName", target = "lastName"),
             @Mapping(source = "email", target = "email"),
-            @Mapping(source = "password", target = "password")
+            @Mapping(source = "password", target = "password"),
+            @Mapping(source = "ratings", target = "ratings")
     })
     User mapToUserEntity(UserDto userDto);
 }

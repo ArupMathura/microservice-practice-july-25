@@ -1,6 +1,10 @@
+server:
+    port: 8081
+
 spring:
+  application:
+    name: user-service
   datasource:
-    name: user-microservice
     url: jdbc:postgresql://localhost:5432/user-microservices
     username: postgres
     password: 1234
