@@ -1,6 +1,8 @@
 package com.example.revisionSpringBoot.service.impl;
 
+import com.example.revisionSpringBoot.dto.RatingDto;
 import com.example.revisionSpringBoot.dto.UserDto;
+import com.example.revisionSpringBoot.entity.Rating;
 import com.example.revisionSpringBoot.entity.User;
 import com.example.revisionSpringBoot.exception.ResourceNotFoundException;
 import com.example.revisionSpringBoot.mapper.AutoUserMapper;
@@ -9,8 +11,15 @@ import com.example.revisionSpringBoot.repository.UserRepository;
 import com.example.revisionSpringBoot.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,6 +32,8 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     private AutoUserMapper autoUserMapper;
+
+    private RestTemplate restTemplate;
 
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -45,6 +56,21 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("user", "id", uuid));
 //        User user = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
 //        return UserMapper.mapToUserDto(user);
+
+        // fetch rating of the above user from RATING-SERVICE
+        // localhost:8083/api/ratings/users/e07406c8-b149-46d9-a33f-a1257f9cf68e
+
+        ResponseEntity<List<Rating>> ratingResponse =
+                restTemplate.exchange(
+                        "http://localhost:8083/api/ratings/users/" + userId,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<List<Rating>>() {}
+                );
+
+        List<Rating> ratingsOfUser = ratingResponse.getBody();
+        log.info("Ratings of user: {}", ratingsOfUser);
+        user.setRatings(ratingsOfUser);
         return autoUserMapper.mapToUserDto(user);
     }
 
