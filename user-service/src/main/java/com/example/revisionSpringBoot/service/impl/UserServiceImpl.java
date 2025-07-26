@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
         ResponseEntity<List<Rating>> ratingResponse =
                 restTemplate.exchange(
-                        "http://localhost:8083/api/ratings/users/" + userId,
+                        "http://RATING-SERVICE/api/ratings/users/" + userId,
                         HttpMethod.GET,
                         null,
                         new ParameterizedTypeReference<List<Rating>>() {}
@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
         List<Rating> enrichedRatings = ratingsOfUser.stream().map(rating -> {
             String hotelId = rating.getHotelId();
             ResponseEntity<Hotel> hotelResponse = restTemplate.exchange(
-                    "http://localhost:8082/api/hotels/" + hotelId,
+                    "http://HOTEL-SERVICE/api/hotels/" + hotelId,
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<Hotel>() {}
