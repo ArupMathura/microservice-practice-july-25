@@ -1,5 +1,6 @@
 package com.example.revisionSpringBoot.dto;
 
+import com.example.revisionSpringBoot.entity.Hotel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,4 +16,5 @@ public class RatingDto {
     private String hotelId;
     private String rating;
     private String feedback;
+    private Hotel hotel;
 }

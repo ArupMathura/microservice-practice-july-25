@@ -2,6 +2,7 @@ package com.example.revisionSpringBoot.service.impl;
 
 import com.example.revisionSpringBoot.dto.RatingDto;
 import com.example.revisionSpringBoot.dto.UserDto;
+import com.example.revisionSpringBoot.entity.Hotel;
 import com.example.revisionSpringBoot.entity.Rating;
 import com.example.revisionSpringBoot.entity.User;
 import com.example.revisionSpringBoot.exception.ResourceNotFoundException;
@@ -51,13 +52,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(String userId) {
         UUID uuid = UUID.fromString(userId);
-        log.info("in user service implementation : received user id : -----> {}", userId);
+        log.info("in user service implementation : Fetching user id : -----> {}", userId);
         User user = userRepository.findById(uuid)
                 .orElseThrow(() -> new ResourceNotFoundException("user", "id", uuid));
 //        User user = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
 //        return UserMapper.mapToUserDto(user);
 
-        // fetch rating of the above user from RATING-SERVICE
+        // // Step 1: Fetch all ratings by user from RATING-SERVICE
         // localhost:8083/api/ratings/users/e07406c8-b149-46d9-a33f-a1257f9cf68e
 
         ResponseEntity<List<Rating>> ratingResponse =
@@ -70,7 +71,25 @@ public class UserServiceImpl implements UserService {
 
         List<Rating> ratingsOfUser = ratingResponse.getBody();
         log.info("Ratings of user: {}", ratingsOfUser);
-        user.setRatings(ratingsOfUser);
+
+        // Step 2: For each rating, call HOTEL-SERVICE using hotelId
+        // http://localhost:8082/api/hotels/eb4189df-45c7-4025-8227-fc978cc5ea18
+        List<Rating> enrichedRatings = ratingsOfUser.stream().map(rating -> {
+            String hotelId = rating.getHotelId();
+            ResponseEntity<Hotel> hotelResponse = restTemplate.exchange(
+                    "http://localhost:8082/api/hotels/" + hotelId,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<Hotel>() {}
+            );
+
+            Hotel hotel = hotelResponse.getBody();
+            log.info("Ratings per hotel: {}", hotel);
+            rating.setHotel(hotel);
+            return rating;
+        }).collect(Collectors.toList());
+
+        user.setRatings(enrichedRatings);
         return autoUserMapper.mapToUserDto(user);
     }
 
