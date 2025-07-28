@@ -1,6 +1,7 @@
 package com.example.revisionSpringBoot.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -19,11 +20,13 @@ import java.util.UUID;
 @Entity
 @Table(name = "users")
 public class User {
+//    @Id
+//    @GeneratedValue(generator = "uuid")
+//    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
+//    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
+//    private UUID id;
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
-    private UUID id;
+    private String id;
 
     @Column(nullable = false)
     private String firstName;
@@ -34,7 +37,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @JsonIgnore             // This hides the password field in the response
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
     private String password;
 
@@ -43,19 +46,5 @@ public class User {
 
     @Transient
     private List<Rating> ratings = new ArrayList<>();
-
-    @SuppressWarnings("unused")
-    public User(String firstName, String lastName, String email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-    }
-
-    // You used @JsonIgnore correctly on the password field, but it's still showing in the response.
-    // still showing because of Lombok issue — add json ignore in getter
-    @JsonIgnore
-    public List<Rating> getRatings() {
-        return ratings;
-    }
 
 }

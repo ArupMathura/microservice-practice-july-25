@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -39,13 +40,22 @@ public class UserServiceImpl implements UserService {
 
     private HotelServiceFeignClient hotelServiceFeignClient;
 
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public UserDto createUser(UserDto userDto) {
         System.out.println("in user service implementation : User ID before saving: " + userDto.getId());
 //        User user = UserMapper.mapToUserEntity(userDto);
+
+        // Encrypt the password
+        String encodedPassword = passwordEncoder.encode(userDto.getPassword());
+        userDto.setPassword(encodedPassword);
+
         User user = autoUserMapper.mapToUserEntity(userDto);
+        log.info("before saving : ----------> {};  {};  {}", user.getId(),user.getEmail(), user.getPassword());
 
         User saveUser = userRepository.save(user);
+        log.info("after saving : ----------> {};  {};  {}", user.getId(),user.getEmail(), user.getPassword());
 
 //        UserDto saveUserDto = UserMapper.mapToUserDto(saveUser);
         UserDto saveUserDto = autoUserMapper.mapToUserDto(saveUser);
@@ -54,10 +64,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(String userId) {
-        UUID uuid = UUID.fromString(userId);
         log.info("in user service implementation : Fetching user id : -----> {}", userId);
-        User user = userRepository.findById(uuid)
-                .orElseThrow(() -> new ResourceNotFoundException("user", "id", uuid));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("user", "id", userId));
 //        User user = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
 //        return UserMapper.mapToUserDto(user);
 
@@ -103,8 +112,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUserById(String userId, UserDto user) {
-        UUID uuid = UUID.fromString(userId);
-        User existingUser = userRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("user", "id", userId));
+        User existingUser = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("user", "id", userId));
         log.info("in user service implementation : user id --> {}, name --> {} {}, email --> {}", existingUser.getId(), existingUser.getFirstName(), existingUser.getLastName(), existingUser.getEmail());
         existingUser.setFirstName(user.getFirstName());
         existingUser.setLastName(user.getLastName());
@@ -116,8 +124,8 @@ public class UserServiceImpl implements UserService {
     }
 
     public void deleteUserById(String userId) {
-        UUID uuid = UUID.fromString(userId);
-        userRepository.deleteById(uuid);
+//        UUID uuid = UUID.fromString(userId);
+        userRepository.deleteById(userId);
     }
 
     @Override

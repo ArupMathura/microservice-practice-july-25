@@ -15,6 +15,7 @@ import org.springframework.web.context.request.WebRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
@@ -26,6 +27,8 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto user) {
+        String userId = UUID.randomUUID().toString();
+        user.setId(userId);
         log.info("in user controller : received user : -----> {}", user);
         UserDto savedUser = userService.createUser(user);
         log.info("in user controller : user id = {} name = {} {} email = {}", user.getId(), user.getFirstName(), user.getLastName(), user.getEmail());
@@ -35,7 +38,7 @@ public class UserController {
     @GetMapping("{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable("id") String userId) {
         UserDto getUser = userService.getUserById(userId);
-        log.info("in user controller : user id --> {}, name --> {} {}, email --> {}, password -->{}, ratings --> {}", getUser.getId(), getUser.getFirstName(), getUser.getLastName(), getUser.getEmail(), getUser.getPassword(), getUser.getRatings());
+        log.info("in user controller : user id --> {}, name --> {} {}, email --> {}, ratings --> {}", getUser.getId(), getUser.getFirstName(), getUser.getLastName(), getUser.getEmail(), getUser.getRatings());
         return new ResponseEntity<>(getUser, HttpStatus.OK);
     }
 
