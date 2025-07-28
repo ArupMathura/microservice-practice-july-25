@@ -6,6 +6,7 @@ import com.example.revisionSpringBoot.entity.Hotel;
 import com.example.revisionSpringBoot.entity.Rating;
 import com.example.revisionSpringBoot.entity.User;
 import com.example.revisionSpringBoot.exception.ResourceNotFoundException;
+import com.example.revisionSpringBoot.feignClientServices.HotelServiceFeignClient;
 import com.example.revisionSpringBoot.mapper.AutoUserMapper;
 //import com.example.revisionSpringBoot.mapper.UserMapper;
 import com.example.revisionSpringBoot.repository.UserRepository;
@@ -35,6 +36,8 @@ public class UserServiceImpl implements UserService {
     private AutoUserMapper autoUserMapper;
 
     private RestTemplate restTemplate;
+
+    private HotelServiceFeignClient hotelServiceFeignClient;
 
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -75,16 +78,9 @@ public class UserServiceImpl implements UserService {
         // Step 2: For each rating, call HOTEL-SERVICE using hotelId
         // http://localhost:8082/api/hotels/eb4189df-45c7-4025-8227-fc978cc5ea18
         List<Rating> enrichedRatings = ratingsOfUser.stream().map(rating -> {
-            String hotelId = rating.getHotelId();
-            ResponseEntity<Hotel> hotelResponse = restTemplate.exchange(
-                    "http://HOTEL-SERVICE/api/hotels/" + hotelId,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<Hotel>() {}
-            );
 
-            Hotel hotel = hotelResponse.getBody();
-            log.info("Ratings per hotel: {}", hotel);
+            Hotel hotel = hotelServiceFeignClient.getHotelById(rating.getHotelId());
+
             rating.setHotel(hotel);
             return rating;
         }).collect(Collectors.toList());
