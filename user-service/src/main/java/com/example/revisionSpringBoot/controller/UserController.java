@@ -1,12 +1,15 @@
 package com.example.revisionSpringBoot.controller;
 
 import com.example.revisionSpringBoot.dto.UserDto;
+import com.example.revisionSpringBoot.entity.Rating;
 import com.example.revisionSpringBoot.entity.User;
 import com.example.revisionSpringBoot.exception.ErrorDetails;
 import com.example.revisionSpringBoot.exception.ResourceNotFoundException;
+import com.example.revisionSpringBoot.feignClientServices.RatingServiceFeignClient;
 import com.example.revisionSpringBoot.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -89,5 +92,13 @@ public class UserController {
                 "USER_NOT_FOUND"
         );
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    @Autowired
+    private RatingServiceFeignClient ratingService;
+
+    @PostMapping("/create-rating")
+    public ResponseEntity<Rating> createRating(@RequestBody Rating rating) {
+        return ratingService.create(rating);
     }
 }
