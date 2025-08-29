@@ -8,15 +8,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class HotelServiceImpl implements HotelService {
 
-    @Autowired
     private HotelRepository hotelRepository;
+
+    public HotelServiceImpl(HotelRepository hotelRepository) {
+        this.hotelRepository = hotelRepository;
+    }
 
     @Override
     public Hotel create(Hotel hotel) {
+        Optional<Hotel> hotelRepositoryById = hotelRepository.findByName(hotel.getName());
+        if (hotelRepositoryById.isPresent()) {
+            throw new ResourceNotFoundException("Holel already exist with this name : " + hotel.getName());
+        }
         return hotelRepository.save(hotel);
     }
 

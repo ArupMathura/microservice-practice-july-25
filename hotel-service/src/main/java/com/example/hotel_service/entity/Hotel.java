@@ -3,10 +3,7 @@ package com.example.hotel_service.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -15,6 +12,7 @@ import lombok.Setter;
 
 @Entity
 @Table
+@Builder
 public class Hotel {
 
     @Id
@@ -22,4 +20,10 @@ public class Hotel {
     private String name;
     private String location;
     private String about;
+
+    public Hotel(String name, String location, String about) {
+        this.name = name;
+        this.location = location;
+        this.about = about;
+    }
 }
