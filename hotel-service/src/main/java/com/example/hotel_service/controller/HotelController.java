@@ -23,9 +23,8 @@ public class HotelController {
     @PostMapping
     @Operation(summary = "Save new hotel", description = "Save new hotel")
     public ResponseEntity<Hotel> createHotel(@RequestBody Hotel hotel) {
-        String hotelId = UUID.randomUUID().toString();
-        hotel.setId(hotelId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(hotelService.create(hotel));
+        Hotel createHotel = hotelService.create(hotel);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createHotel);
     }
 
     @GetMapping("/{hotelId}")

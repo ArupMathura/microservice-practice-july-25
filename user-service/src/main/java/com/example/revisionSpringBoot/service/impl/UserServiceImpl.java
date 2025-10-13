@@ -44,6 +44,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
+
+        String userId = UUID.randomUUID().toString();
+        userDto.setId(userId);
+
         System.out.println("in user service implementation : User ID before saving: " + userDto.getId());
 //        User user = UserMapper.mapToUserEntity(userDto);
 

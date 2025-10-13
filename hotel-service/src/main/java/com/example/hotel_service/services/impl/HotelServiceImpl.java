@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class HotelServiceImpl implements HotelService {
@@ -21,6 +22,8 @@ public class HotelServiceImpl implements HotelService {
 
     @Override
     public Hotel create(Hotel hotel) {
+        String hotelId = UUID.randomUUID().toString();
+        hotel.setId(hotelId);
         Optional<Hotel> hotelRepositoryById = hotelRepository.findByName(hotel.getName());
         if (hotelRepositoryById.isPresent()) {
             throw new ResourceNotFoundException("Holel already exist with this name : " + hotel.getName());

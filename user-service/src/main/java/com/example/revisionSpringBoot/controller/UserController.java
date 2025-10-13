@@ -30,40 +30,48 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto user) {
-        String userId = UUID.randomUUID().toString();
-        user.setId(userId);
+
         log.info("in user controller : received user : -----> {}", user);
         UserDto savedUser = userService.createUser(user);
         log.info("in user controller : user id = {} name = {} {} email = {}", user.getId(), user.getFirstName(), user.getLastName(), user.getEmail());
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+
     }
 
     @GetMapping("{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable("id") String userId) {
+
         UserDto getUser = userService.getUserById(userId);
         log.info("in user controller : user id --> {}, name --> {} {}, email --> {}, ratings --> {}", getUser.getId(), getUser.getFirstName(), getUser.getLastName(), getUser.getEmail(), getUser.getRatings());
         return new ResponseEntity<>(getUser, HttpStatus.OK);
+
     }
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
+
         List<UserDto> userList = userService.getAllUsers();
         log.info("in user controller : All Users: {}", userList);
         return new ResponseEntity<>(userList, HttpStatus.OK);
+
     }
 
     @PutMapping("{id}")
     public ResponseEntity<UserDto> updateUserById(@PathVariable("id") String userId, @RequestBody UserDto userDto) {
+
         UserDto updateUser = userService.updateUserById(userId, userDto);
         log.info("in user controller : user id --> {}, name --> {} {}, email --> {}", updateUser.getId(), updateUser.getFirstName(), updateUser.getLastName(), updateUser.getEmail());
         return new ResponseEntity<>(updateUser, HttpStatus.OK);
+
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteUserById(@PathVariable("id") String userId) {
+
         log.info("in user controller : received user id : -----> {}", userId);
         userService.deleteUserById(userId);
         return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
+
     }
 
     // update firstName and lastName by email
