@@ -26,8 +26,9 @@ public class HotelServiceImpl implements HotelService {
         hotel.setId(hotelId);
         Optional<Hotel> hotelRepositoryById = hotelRepository.findByName(hotel.getName());
         if (hotelRepositoryById.isPresent()) {
-            throw new ResourceNotFoundException("Holel already exist with this name : " + hotel.getName());
+            throw new ResourceNotFoundException("Hotel already exist with this name : " + hotel.getName());
         }
+        System.out.println(hotelId);
         return hotelRepository.save(hotel);
     }
 

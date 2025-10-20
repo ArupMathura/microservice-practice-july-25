@@ -2,6 +2,7 @@ package com.example.hotel_service.controller;
 
 import com.example.hotel_service.entity.Hotel;
 import com.example.hotel_service.services.HotelService;
+import com.example.hotel_service.services.impl.HotelServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import java.util.UUID;
 public class HotelController {
 
     @Autowired
-    private HotelService hotelService;
+    private HotelServiceImpl hotelService;
 
     @PostMapping
     @Operation(summary = "Save new hotel", description = "Save new hotel")

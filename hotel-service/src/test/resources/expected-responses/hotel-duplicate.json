@@ -1,0 +1,5 @@
+{
+  "success": false,
+  "message": "Hotel already exist with this name : Abcd",
+  "status": "NOT_FOUND"
+}
